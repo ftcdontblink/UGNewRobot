@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Chassis;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -16,7 +18,13 @@ public class Robot {
     public Shooter shooter;
     public WobbleGoal wobbleGoal;
 
+    public FtcDashboard dashboard;
+    public Telemetry telemetry;
+
     public Robot(HardwareMap hardwareMap, GamepadEx g1, GamepadEx g2) {
+        dashboard = FtcDashboard.getInstance();
+        telemetry = dashboard.getTelemetry();
+
         drive = new SampleMecanumDrive(hardwareMap);
         mecanumDrive = new Chassis(drive, g1);
         intake = new Intake(hardwareMap);
@@ -26,9 +34,9 @@ public class Robot {
 
     public void update(GamepadEx g1, GamepadEx g2) {
         drive.update();
-        mecanumDrive.update(g1, g2);
-        intake.update(g1, g2);
-        shooter.update(g1, g2);
-        wobbleGoal.update(g1, g2);
+        mecanumDrive.update(g1, g2, telemetry);
+        intake.update(g1, g2, telemetry);
+        shooter.update(g1, g2, telemetry);
+        wobbleGoal.update(g1, g2, telemetry);
     }
 }

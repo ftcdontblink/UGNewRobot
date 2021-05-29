@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class Intake extends HardwareBase {
     DcMotor motor1;
     DcMotor motor2;
@@ -24,7 +26,7 @@ public class Intake extends HardwareBase {
     }
 
     @Override
-    public void update(GamepadEx g1, GamepadEx g2) {
+    public void update(GamepadEx g1, GamepadEx g2, Telemetry telemetry) {
         motor1.setPower(g2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - g2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
         motor2.setPower(g2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) - g2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
     }

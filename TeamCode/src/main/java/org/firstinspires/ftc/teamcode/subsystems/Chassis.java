@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
@@ -18,6 +19,8 @@ public class Chassis extends HardwareBase {
     SampleMecanumDrive drive;
     Mode mode = Mode.NORMAL;
     ToggleButtonReader toggleA;
+
+    public static double distance = 0;
 
     enum Mode {
         NORMAL,
@@ -40,7 +43,7 @@ public class Chassis extends HardwareBase {
     }
 
     @Override
-    public void update(GamepadEx g1, GamepadEx g2) {
+    public void update(GamepadEx g1, GamepadEx g2, Telemetry telemetry) {
         Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
         Pose2d driveDirection = new Pose2d();
 
@@ -78,5 +81,7 @@ public class Chassis extends HardwareBase {
 
         drive.setWeightedDrivePower(driveDirection);
         headingController.update(poseEstimate.getHeading());
+
+        distance = poseEstimate.vec().distTo(targetPosition);
     }
 }

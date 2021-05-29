@@ -27,9 +27,9 @@ public class TeleOpMain extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new Robot(hardwareMap);
         g1ex = new GamepadEx(gamepad1);
         g2ex = new GamepadEx(gamepad2);
+        robot = new Robot(hardwareMap, g1ex, g2ex);
 
         waitForStart();
 

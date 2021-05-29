@@ -16,6 +16,7 @@ public class HighGoalPipelineTest extends LinearOpMode {
     HighGoalPipeline pipeline = new HighGoalPipeline(telemetry);;
     private OpenCvWebcam webcam;
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new SampleMecanumDrive(hardwareMap);
