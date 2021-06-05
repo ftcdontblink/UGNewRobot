@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstra
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -22,9 +23,15 @@ public class AutoTest extends LinearOpMode {
     Robot robot;
     Vision vision;
 
+    GamepadEx g1;
+    GamepadEx g2;
+
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new Robot(hardwareMap);
+        g1 = new GamepadEx(gamepad1);
+        g2 = new GamepadEx(gamepad2);
+
+        robot = new Robot(hardwareMap, g1, g2);
         vision = new Vision(hardwareMap, "camera", telemetry);
 
         vision.update(telemetry, this);

@@ -19,8 +19,8 @@ public class Intake extends HardwareBase {
 
     @Override
     public void init(HardwareMap map) {
-        motor1 = map.get(DcMotor.class, "motor1");
-        motor2 = map.get(DcMotor.class, "motor2");
+        motor1 = map.get(DcMotor.class, "m1");
+        motor2 = map.get(DcMotor.class, "m2");
 
         motor2.setDirection(DcMotorSimple.Direction.REVERSE);
     }
