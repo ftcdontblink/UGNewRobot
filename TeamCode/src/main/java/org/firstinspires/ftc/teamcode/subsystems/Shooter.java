@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.subclasses.RingCounter;
 import org.firstinspires.ftc.teamcode.subsystems.subclasses.SideHood;
 import org.firstinspires.ftc.teamcode.subsystems.subclasses.VelocityPIDFController;
 
+@Config
 public class Shooter extends HardwareBase {
     public VelocityPIDFController controller;
     public static double rpm = 0;
@@ -39,54 +41,25 @@ public class Shooter extends HardwareBase {
 
     @Override
     public void init(HardwareMap map) {
-        sideHood = new SideHood(map);
+//        sideHood = new SideHood(map);
         flicker = new Flicker(map);
-        counter = new RingCounter(map, false);
+//        counter = new RingCounter(map, false);
 
-        controller = new VelocityPIDFController(new PIDCoefficients(0, 0, 0), 0, 0, 0, map);
+        controller = new VelocityPIDFController(new PIDCoefficients(0.00125, 0, 0), 0.0004275, 0.00015, 0, map);
 
-        veloAdjust = new InterpLUT();
-        veloAdjustPowershots = new InterpLUT();
-
-        veloAdjust.add(5, 5);
-        veloAdjust.add(5, 5);
-        veloAdjust.add(5, 5);
-        veloAdjust.add(5, 5);
-        veloAdjust.add(5, 5);
-        veloAdjust.add(5, 5);
-
-        veloAdjustPowershots.add(5, 5);
-        veloAdjustPowershots.add(5, 5);
-        veloAdjustPowershots.add(5, 5);
-        veloAdjustPowershots.add(5, 5);
-        veloAdjustPowershots.add(5, 5);
-        veloAdjustPowershots.add(5, 5);
-
-        veloAdjust.createLUT();
-        veloAdjustPowershots.createLUT();
+//        veloAdjust = new InterpLUT();
+//        veloAdjustPowershots = new InterpLUT();
+//
+//
+//        veloAdjust.createLUT();
+//        veloAdjustPowershots.createLUT();
     }
 
     @Override
     public void update(GamepadEx g1, GamepadEx g2, Telemetry telemetry) {
-        switch(state) {
-            case OFF:
-                rpm = 0;
-                break;
-            case IDLE:
-                rpm = 1500;
-                break;
-            case ON:
-                rpm = veloAdjust.get(Chassis.distance);
-                break;
-            case POWERSHOTS:
-                rpm = veloAdjustPowershots.get(Chassis.distance);
-                break;
-        }
+        controller.setRPM(rpm);
+//        sideHood.update(2, g1, g2);
 
-        sideHood.update(2, g1, g2);
-
-        if(RingCounter.ringCount > 0 || g2.getButton(GamepadKeys.Button.X)) {
-            flicker.flick();
-        }
+        flicker.kick(g1);
     }
 }

@@ -25,18 +25,18 @@ public class Robot {
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
 
-//        drive = new SampleMecanumDrive(hardwareMap);
-//        mecanumDrive = new Chassis(drive, g1);
+        drive = new SampleMecanumDrive(hardwareMap);
+        mecanumDrive = new Chassis(drive, g1);
         intake = new Intake(hardwareMap);
-//        shooter = new Shooter(hardwareMap);
+        shooter = new Shooter(hardwareMap);
 //        wobbleGoal = new WobbleGoal(hardwareMap);
     }
 
     public void update(GamepadEx g1, GamepadEx g2) {
-//        drive.update();
-//        mecanumDrive.update(g1, g2, telemetry);
+        drive.update();
+        mecanumDrive.update(g1, g2, telemetry);
         intake.update(g1, g2, telemetry);
-//        shooter.update(g1, g2, telemetry);
+        shooter.update(g1, g2, telemetry);
 //        wobbleGoal.update(g1, g2, telemetry);
     }
 }

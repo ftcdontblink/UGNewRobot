@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.kinematics.Kinematics;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.MovingStatistics;
@@ -57,12 +58,12 @@ public class VelocityPIDFController {
     }
 
     public VelocityPIDFController(PIDCoefficients pid, double kV, double kA, double kStatic, HardwareMap hardwareMap) {
-        myMotor1 = hardwareMap.get(DcMotorEx.class, "flywheelMotor1");
-        myMotor2 = hardwareMap.get(DcMotorEx.class, "flywheelMotor2");
+        myMotor1 = hardwareMap.get(DcMotorEx.class, "flywheelLeft");
+        myMotor2 = hardwareMap.get(DcMotorEx.class, "flywheelRight");
 
         // Reverse as appropriate
-        // myMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        // myMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+         myMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+         myMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Ensure that RUN_USING_ENCODER is not set
         myMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

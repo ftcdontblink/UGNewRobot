@@ -47,7 +47,7 @@ public class Chassis extends HardwareBase {
         Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
         Pose2d driveDirection = new Pose2d();
 
-        Double y = Math.copySign(Math.pow(-g1.getLeftY(), 2), -g1.getLeftY());
+        Double y = Math.copySign(Math.pow(g1.getLeftY(), 2), g1.getLeftY());
         Double x = Math.copySign(Math.pow(-g1.getLeftX(), 2), -g1.getLeftX());
         Double rotate = Math.copySign(Math.pow(-g1.getRightX(), 2), -g1.getRightX());
 

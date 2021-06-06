@@ -21,7 +21,7 @@ public class IntakeTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-            robot.intake.update(g1, g2, telemetry);
+            robot.update(g1, g2);
         }
     }
 }
