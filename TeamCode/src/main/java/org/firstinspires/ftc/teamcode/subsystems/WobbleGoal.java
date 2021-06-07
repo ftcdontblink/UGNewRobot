@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -25,7 +26,7 @@ public class WobbleGoal extends HardwareBase {
     }
 
     @Override
-    public void update(GamepadEx g1, GamepadEx g2, Telemetry telemetry) {
+    public void update(Gamepad g1, Gamepad g2, Telemetry telemetry) {
 
     }
 }

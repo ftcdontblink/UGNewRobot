@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -21,7 +22,7 @@ public class Robot {
     public FtcDashboard dashboard;
     public Telemetry telemetry;
 
-    public Robot(HardwareMap hardwareMap, GamepadEx g1, GamepadEx g2) {
+    public Robot(HardwareMap hardwareMap, Gamepad g1, Gamepad g2) {
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
 
@@ -32,11 +33,11 @@ public class Robot {
 //        wobbleGoal = new WobbleGoal(hardwareMap);
     }
 
-    public void update(GamepadEx g1, GamepadEx g2) {
+    public void update(Gamepad g1, Gamepad g2) {
         drive.update();
         mecanumDrive.update(g1, g2, telemetry);
         intake.update(g1, g2, telemetry);
-        shooter.update(g1, g2, telemetry);
+        shooter.update(g2);
 //        wobbleGoal.update(g1, g2, telemetry);
     }
 }

@@ -16,12 +16,12 @@ public class IntakeTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         g1 = new GamepadEx(gamepad1);
         g2 = new GamepadEx(gamepad2);
-        robot = new Robot(hardwareMap, g1, g2);
+        robot = new Robot(hardwareMap, gamepad1, gamepad2);
 
         waitForStart();
 
         while(opModeIsActive()) {
-            robot.update(g1, g2);
+            robot.update(gamepad1, gamepad2);
         }
     }
 }

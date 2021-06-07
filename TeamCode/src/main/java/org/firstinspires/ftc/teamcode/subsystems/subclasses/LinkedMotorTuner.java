@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
@@ -27,8 +28,8 @@ public class LinkedMotorTuner extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         // Change my id
-        DcMotorEx myMotor1 = hardwareMap.get(DcMotorEx.class, "flywheelMotor1");
-        DcMotorEx myMotor2 = hardwareMap.get(DcMotorEx.class, "flywheelMotor2");
+        DcMotorEx myMotor1 = hardwareMap.get(DcMotorEx.class, "flywheelLeft");
+        DcMotorEx myMotor2 = hardwareMap.get(DcMotorEx.class, "flywheelRight");
 
         // Reverse as appropriate
         // myMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -36,6 +37,9 @@ public class LinkedMotorTuner extends LinearOpMode {
 
         myMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         myMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        myMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        myMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);

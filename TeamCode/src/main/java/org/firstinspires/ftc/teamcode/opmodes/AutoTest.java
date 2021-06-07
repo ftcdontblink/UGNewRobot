@@ -23,15 +23,9 @@ public class AutoTest extends LinearOpMode {
     Robot robot;
     Vision vision;
 
-    GamepadEx g1;
-    GamepadEx g2;
-
     @Override
     public void runOpMode() throws InterruptedException {
-        g1 = new GamepadEx(gamepad1);
-        g2 = new GamepadEx(gamepad2);
-
-        robot = new Robot(hardwareMap, g1, g2);
+        robot = new Robot(hardwareMap, gamepad1, gamepad2);
         vision = new Vision(hardwareMap, "camera", telemetry);
 
         vision.update(telemetry, this);

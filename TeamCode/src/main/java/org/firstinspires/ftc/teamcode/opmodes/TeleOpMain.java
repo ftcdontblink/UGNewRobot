@@ -29,14 +29,14 @@ public class TeleOpMain extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         g1ex = new GamepadEx(gamepad1);
         g2ex = new GamepadEx(gamepad2);
-        robot = new Robot(hardwareMap, g1ex, g2ex);
+        robot = new Robot(hardwareMap, gamepad1, gamepad2);
 
         waitForStart();
 
         if (isStopRequested()) return;
 
         while (opModeIsActive() && !isStopRequested()) {
-            robot.update(g1ex, g2ex);
+            robot.update(gamepad1, gamepad2);
         }
     }
 }

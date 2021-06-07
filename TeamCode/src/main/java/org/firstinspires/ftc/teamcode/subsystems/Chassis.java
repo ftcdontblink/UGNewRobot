@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -27,12 +28,10 @@ public class Chassis extends HardwareBase {
         AIM
     }
 
-    public Chassis(SampleMecanumDrive drive, GamepadEx g1) {
+    public Chassis(SampleMecanumDrive drive, Gamepad g1) {
         this.drive = drive;
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         headingController.setInputBounds(-Math.PI, Math.PI);
-
-        toggleA = new ToggleButtonReader(g1, GamepadKeys.Button.A);
 
         super.init("Chassis");
     }
@@ -43,24 +42,24 @@ public class Chassis extends HardwareBase {
     }
 
     @Override
-    public void update(GamepadEx g1, GamepadEx g2, Telemetry telemetry) {
+    public void update(Gamepad g1, Gamepad g2, Telemetry telemetry) {
         Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
         Pose2d driveDirection = new Pose2d();
 
-        Double y = Math.copySign(Math.pow(g1.getLeftY(), 2), g1.getLeftY());
-        Double x = Math.copySign(Math.pow(-g1.getLeftX(), 2), -g1.getLeftX());
-        Double rotate = Math.copySign(Math.pow(-g1.getRightX(), 2), -g1.getRightX());
+        Double y = Math.copySign(Math.pow(-g1.left_stick_y, 2), -g1.left_stick_y);
+        Double x = Math.copySign(Math.pow(-g1.left_stick_x, 2), -g1.left_stick_x);
+        Double rotate = Math.copySign(Math.pow(-g1.right_stick_x, 2), -g1.right_stick_x);
 
         switch(mode) {
             case NORMAL:
-                if(toggleA.getState()) {
+                if(g1.a) {
                     mode = Mode.AIM;
                 }
 
                 driveDirection = new Pose2d(y, x, rotate);
                 break;
             case AIM:
-                if(!toggleA.getState()) {
+                if(!g1.a) {
                     mode = Mode.NORMAL;
                 }
 
