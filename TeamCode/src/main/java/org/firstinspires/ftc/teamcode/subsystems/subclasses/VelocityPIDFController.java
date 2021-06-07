@@ -3,12 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems.subclasses;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.kinematics.Kinematics;
-import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.MovingStatistics;
 
 public class VelocityPIDFController {
@@ -26,12 +20,6 @@ public class VelocityPIDFController {
     private double kA;
     private double kStatic;
 
-    DcMotorEx myMotor1;
-    DcMotorEx myMotor2;
-
-    public final ElapsedTime veloTimer = new ElapsedTime();
-    private double lastTargetVelo = 0.0;
-
     private VelocityPIDFController() {}
 
     public VelocityPIDFController(PIDCoefficients pid) {
@@ -47,33 +35,6 @@ public class VelocityPIDFController {
     }
 
     public VelocityPIDFController(PIDCoefficients pid, double kV, double kA, double kStatic) {
-        controller = new PIDFController(pid);
-        accelSamples = new MovingStatistics(ACCEL_SAMPLES);
-
-        this.kV = kV;
-        this.kA = kA;
-        this.kStatic = kStatic;
-
-        reset();
-    }
-
-    public VelocityPIDFController(PIDCoefficients pid, double kV, double kA, double kStatic, HardwareMap hardwareMap) {
-        myMotor1 = hardwareMap.get(DcMotorEx.class, "flywheelLeft");
-        myMotor2 = hardwareMap.get(DcMotorEx.class, "flywheelRight");
-
-        // Reverse as appropriate
-         myMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
-         myMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // Ensure that RUN_USING_ENCODER is not set
-        myMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        myMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Turns on bulk reading
-        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
-
         controller = new PIDFController(pid);
         accelSamples = new MovingStatistics(ACCEL_SAMPLES);
 
@@ -122,26 +83,6 @@ public class VelocityPIDFController {
         double feedforward = Kinematics.calculateMotorFeedforward(
                 controller.getTargetPosition(), controller.getTargetVelocity(), kV, kA, kStatic);
         return correction + feedforward;
-    }
-
-    public void setRPM(double rpm) {
-        double targetVelo = rpm*28.0/60.0;
-
-        // Call necessary controller methods
-        this.setTargetVelocity(targetVelo);
-        this.setTargetAcceleration((targetVelo - lastTargetVelo) / veloTimer.seconds());
-        veloTimer.reset();
-
-        lastTargetVelo = targetVelo;
-
-        // Get the velocity from the motor with the encoder
-        double motorPos = myMotor1.getCurrentPosition();
-        double motorVelo = myMotor1.getVelocity();
-
-        // Update the controller and set the power for each motor
-        double power = this.update(motorPos, motorVelo);
-        myMotor1.setPower(power);
-        myMotor2.setPower(power);
     }
 
     public void reset() {

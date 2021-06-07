@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -72,9 +70,8 @@ public class Shooter {
     public Shooter(HardwareMap hardwareMap) {
         flywheelLeft = hardwareMap.get(DcMotorEx.class, "flywheelLeft");
         flywheelRight = hardwareMap.get(DcMotorEx.class, "flywheelRight");
-        encoder = hardwareMap.get(DcMotorEx.class, "lfm");
         servo = hardwareMap.get(Servo.class, "index");
-        servo.setPosition(0.2);
+        servo.setPosition(0.05);
 
         shooterConstants();
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -82,7 +79,7 @@ public class Shooter {
         }
 
         servoBackAndForth = new TimedAction(
-                () -> servo.setPosition(0.2),
+                () -> servo.setPosition(0.3),
                 () -> servo.setPosition(0.05),
                 80, // ms
                 true // runs symmetric
@@ -128,6 +125,8 @@ public class Shooter {
 
                 break;
             case SHOOTER_FULL:
+                rpm = Chassis.distance;
+
                 if (gamepad.a) {
                     state = SHOOTER.SHOOTER_EMPTY;
                 }
@@ -137,6 +136,8 @@ public class Shooter {
 
                 break;
             case SHOOTER_POWERSHOTS:
+                rpm = 2800;
+
                 if (gamepad.a) {
                     state = SHOOTER.SHOOTER_EMPTY;
                 }
