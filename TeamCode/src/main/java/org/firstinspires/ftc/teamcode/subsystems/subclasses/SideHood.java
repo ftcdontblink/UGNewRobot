@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.util.Range;
 
 @Config
 public class SideHood {
-    public static final double MAX = 0.28;
-    public static final double MIN = 0.08;
-    public static final double MID = (MAX - MIN) / 2.0;
+    public static double MAX = 0.28;
+    public static double MIN = 0.08;
+    public static double MID = (MAX - MIN) / 2.0;
 
     Servo sideHood;
 
@@ -28,7 +28,7 @@ public class SideHood {
         sideHood.setPosition(MID);
     }
 
-    public void update(double targetTheta, Gamepad g1, Gamepad g2) {
+    public void update(double targetTheta, Gamepad g1) {
         switch(states) {
             case MANUAL:
                 if(g1.left_stick_button)
@@ -48,6 +48,10 @@ public class SideHood {
                 }
                 break;
         }
+    }
+
+    public void setPos(double x) {
+        sideHood.setPosition(x);
     }
 
     public double thetaToPos(double theta) {

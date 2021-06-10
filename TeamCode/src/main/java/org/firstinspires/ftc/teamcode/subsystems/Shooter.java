@@ -14,12 +14,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.subclasses.SideHood;
 import org.firstinspires.ftc.teamcode.subsystems.subclasses.TimedAction;
 import org.firstinspires.ftc.teamcode.subsystems.subclasses.VelocityPIDFController;
 
 
 @Config
 public class Shooter {
+    public static double theta = 0;
+
     public DcMotorEx flywheelLeft;
     public DcMotorEx flywheelRight;
     public DcMotorEx encoder;
@@ -38,7 +41,7 @@ public class Shooter {
 
     // Copy your feedforward gains here
     public static double kV = 0.0004275;
-    public static double kA = 0.00015;
+    public static double kA = 0.0002;
     public static double kStatic = 0;
 
     public static double rpm = 4200;
@@ -57,7 +60,10 @@ public class Shooter {
 
     double motorVelo;
 
+    public SideHood sd;
+
     public SampleMecanumDrive drive;
+    public static double angle = 0.1;
 
     public enum SHOOTER {
         SHOOTER_FULL,
@@ -71,17 +77,18 @@ public class Shooter {
         flywheelLeft = hardwareMap.get(DcMotorEx.class, "flywheelLeft");
         flywheelRight = hardwareMap.get(DcMotorEx.class, "flywheelRight");
         servo = hardwareMap.get(Servo.class, "index");
+        sd = new SideHood(hardwareMap);
         servo.setPosition(0.05);
 
         shooterConstants();
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-
+//coding is cool
         servoBackAndForth = new TimedAction(
-                () -> servo.setPosition(0.3),
+                () -> servo.setPosition(0.2),
                 () -> servo.setPosition(0.05),
-                80, // ms
+                100, // ms
                 true // runs symmetric
         );
 
@@ -112,6 +119,7 @@ public class Shooter {
     }
 
     public void update(Gamepad gamepad) {
+        sd.setPos(angle);
         switch (state) {
             case SHOOTER_EMPTY:
                 rpm = 0;
@@ -125,8 +133,7 @@ public class Shooter {
 
                 break;
             case SHOOTER_FULL:
-                rpm = Chassis.distance;
-
+                rpm = 4000;
                 if (gamepad.a) {
                     state = SHOOTER.SHOOTER_EMPTY;
                 }
@@ -136,7 +143,7 @@ public class Shooter {
 
                 break;
             case SHOOTER_POWERSHOTS:
-                rpm = 2800;
+                rpm = 3400;
 
                 if (gamepad.a) {
                     state = SHOOTER.SHOOTER_EMPTY;
@@ -157,6 +164,11 @@ public class Shooter {
         servoBackAndForth.run();
     }
 
+    public void shoot() {
+        if (!servoBackAndForth.running()) servoBackAndForth.reset();
+        servoBackAndForth.run();
+    }
+
     public void update() {
         targetVelo = rpm * 28 / 1 / 60;
 
@@ -168,10 +180,10 @@ public class Shooter {
         lastTargetVelo = targetVelo;
 
         // Get the velocity from the motor with the encoder
-        motorVelo = encoder.getVelocity();
+        motorVelo = flywheelLeft.getVelocity();
 
         // Update the controller and set the power for each motor
-        power = veloController.update(encoder.getCurrentPosition(), motorVelo);
+        power = veloController.update(flywheelLeft.getCurrentPosition(), motorVelo);
         flywheelLeft.setPower(power);
         flywheelRight.setPower(power);
     }

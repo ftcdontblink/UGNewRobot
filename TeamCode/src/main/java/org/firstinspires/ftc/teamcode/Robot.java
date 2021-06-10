@@ -30,7 +30,7 @@ public class Robot {
         mecanumDrive = new Chassis(drive, g1);
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
-//        wobbleGoal = new WobbleGoal(hardwareMap);
+        wobbleGoal = new WobbleGoal(hardwareMap);
     }
 
     public void update(Gamepad g1, Gamepad g2) {
@@ -38,6 +38,6 @@ public class Robot {
         mecanumDrive.update(g1, g2, telemetry);
         intake.update(g1, g2, telemetry);
         shooter.update(g2);
-//        wobbleGoal.update(g1, g2, telemetry);
+        wobbleGoal.update(g1, g2, telemetry);
     }
 }

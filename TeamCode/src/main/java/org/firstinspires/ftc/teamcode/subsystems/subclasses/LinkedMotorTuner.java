@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
@@ -31,8 +32,8 @@ public class LinkedMotorTuner extends LinearOpMode {
         DcMotorEx myMotor2 = hardwareMap.get(DcMotorEx.class, "flywheelRight");
 
         // Reverse as appropriate
-        // myMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        // myMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+         myMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+         myMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         myMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         myMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

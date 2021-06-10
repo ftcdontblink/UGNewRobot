@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Intake extends HardwareBase {
-    DcMotor motor1;
-    DcMotor motor2;
+    public DcMotor motor1;
+    public DcMotor motor2;
 
     public Intake(HardwareMap hardwareMap) {
         init(hardwareMap);
@@ -30,5 +30,15 @@ public class Intake extends HardwareBase {
     public void update(Gamepad g1, Gamepad g2, Telemetry telemetry) {
         motor1.setPower(g2.right_trigger - g2.left_trigger);
         motor2.setPower(g2.right_trigger - g2.left_trigger);
+    }
+
+    public void on() {
+        motor1.setPower(1);
+        motor2.setPower(1);
+    }
+
+    public void off() {
+        motor1.setPower(0);
+        motor2.setPower(0);
     }
 }
