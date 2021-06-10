@@ -28,6 +28,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
@@ -77,6 +78,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
+    public Shooter shooter;
+    boolean shooterUpdate = false;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -135,6 +138,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+    }
+
+    public void setShooter(Shooter shooter, boolean bool) {
+        this.shooter = shooter;
+        shooterUpdate = bool;
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -203,8 +211,11 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void waitForIdle() {
-        while (!Thread.currentThread().isInterrupted() && isBusy())
+        while (!Thread.currentThread().isInterrupted() && isBusy()) {
             update();
+            if(shooterUpdate)
+                shooter.update();
+        }
     }
 
     public boolean isBusy() {

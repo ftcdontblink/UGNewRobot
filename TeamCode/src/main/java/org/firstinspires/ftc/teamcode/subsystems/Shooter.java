@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.subclasses.SideHood;
 import org.firstinspires.ftc.teamcode.subsystems.subclasses.TimedAction;
 import org.firstinspires.ftc.teamcode.subsystems.subclasses.VelocityPIDFController;
 
@@ -60,8 +59,6 @@ public class Shooter {
 
     double motorVelo;
 
-    public SideHood sd;
-
     public SampleMecanumDrive drive;
     public static double angle = 0.1;
 
@@ -77,7 +74,6 @@ public class Shooter {
         flywheelLeft = hardwareMap.get(DcMotorEx.class, "flywheelLeft");
         flywheelRight = hardwareMap.get(DcMotorEx.class, "flywheelRight");
         servo = hardwareMap.get(Servo.class, "index");
-        sd = new SideHood(hardwareMap);
         servo.setPosition(0.05);
 
         shooterConstants();
@@ -119,7 +115,6 @@ public class Shooter {
     }
 
     public void update(Gamepad gamepad) {
-        sd.setPos(angle);
         switch (state) {
             case SHOOTER_EMPTY:
                 rpm = 0;

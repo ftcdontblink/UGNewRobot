@@ -28,20 +28,15 @@ public class SideHood {
         sideHood.setPosition(MID);
     }
 
-    public void update(double targetTheta, Gamepad g1) {
+    public void update(double position, Gamepad g1) {
         switch(states) {
             case MANUAL:
+                sideHood.setPosition(0.15);
                 if(g1.left_stick_button)
                     states = States.AUTOMATIC;
                 break;
             case AUTOMATIC:
-                if(Math.toDegrees(targetTheta) > 180)
-                    targetTheta -= Math.PI*2;
-
-                if(Math.toDegrees(targetTheta) < -180)
-                    targetTheta += Math.PI*2;
-
-                sideHood.setPosition(thetaToPos(targetTheta));
+                sideHood.setPosition(position);
                 if(g1.right_stick_button) {
                     sideHood.setPosition(MID);
                     states = States.MANUAL;

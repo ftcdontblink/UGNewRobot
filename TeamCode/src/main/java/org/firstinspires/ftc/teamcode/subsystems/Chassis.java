@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.subclasses.SideHood;
 
 public class Chassis extends HardwareBase {
     public static Vector2d targetPosition = new Vector2d(72, -36);
@@ -18,6 +19,8 @@ public class Chassis extends HardwareBase {
     SampleMecanumDrive drive;
     Mode mode = Mode.NORMAL;
     ToggleButtonReader toggleA;
+
+    public SideHood sd;
 
     public static double distance = 70;
 
@@ -37,7 +40,7 @@ public class Chassis extends HardwareBase {
 
     @Override
     public void init(HardwareMap map) {
-
+        sd = new SideHood(map);
     }
 
     @Override
@@ -45,11 +48,19 @@ public class Chassis extends HardwareBase {
         Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
         Pose2d driveDirection = new Pose2d();
 
-        Double y = Math.copySign(Math.pow(-g1.left_stick_y, 3), -g1.left_stick_y);
-        Double x = Math.copySign(Math.pow(-g1.left_stick_x, 3), -g1.left_stick_x);
-        Double rotate = Math.copySign(Math.pow(-g1.right_stick_x, 3), -g1.right_stick_x);
+        Double y = Math.copySign(Math.pow(-g1.left_stick_y, 1), -g1.left_stick_y);
+        Double x = Math.copySign(Math.pow(-g1.left_stick_x, 1), -g1.left_stick_x);
+        Double rotate = Math.copySign(Math.pow(-g1.right_stick_x, 1), -g1.right_stick_x);
 
         double target = 0;
+
+        Vector2d fieldFrameInput = new Vector2d(
+                y, x
+        );
+        Vector2d robotFrameInput = fieldFrameInput.rotated(-poseEstimate.getHeading());
+        Vector2d difference = targetPosition.minus(poseEstimate.vec());
+        double theta = difference.angle();
+        sd.update(theta, g1);
 
         switch(mode) {
             case NORMAL:
@@ -68,12 +79,12 @@ public class Chassis extends HardwareBase {
                     mode = Mode.NORMAL;
                 }
 
-                Vector2d fieldFrameInput = new Vector2d(
+                fieldFrameInput = new Vector2d(
                         y, x
                 );
-                Vector2d robotFrameInput = fieldFrameInput.rotated(-poseEstimate.getHeading());
-                Vector2d difference = targetPosition.minus(poseEstimate.vec());
-                double theta = difference.angle();
+                robotFrameInput = fieldFrameInput.rotated(-poseEstimate.getHeading());
+                difference = targetPosition.minus(poseEstimate.vec());
+                theta = difference.angle();
                 double thetaFF = -fieldFrameInput.rotated(-Math.PI / 2).dot(difference) / (difference.norm() * difference.norm());
 
                 headingController.setTargetPosition(theta);
@@ -123,8 +134,9 @@ public class Chassis extends HardwareBase {
         headingController.update(poseEstimate.getHeading());
 
         distance = poseEstimate.vec().distTo(targetPosition);
+        drive.update();
 
-        telemetry.addData("target", target);
+        telemetry.addData("theta", Math.toDegrees(theta));
         telemetry.addData("target", target);
         telemetry.update();
     }

@@ -112,7 +112,7 @@ public class ControlAward extends LinearOpMode {
             switch(paths) {
                 case MOVE_TO_POWERSHOTS:
                     Shooter.rpm = velo;
-                    robot.shooter.sd.setPos(angle);
+                    robot.mecanumDrive.sd.setPos(angle);
                     if(!robot.drive.isBusy()) {
                         timer.reset();
                         paths = Paths.SHOOT;
@@ -162,7 +162,7 @@ public class ControlAward extends LinearOpMode {
                     }
                     break;
                 case GOBACK:
-                    robot.shooter.sd.setPos(0.22);
+                    robot.mecanumDrive.sd.setPos(0.22);
                     Shooter.rpm = 4100;
                     if(!robot.drive.isBusy()) {
                         timer.reset();

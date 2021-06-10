@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -28,13 +27,13 @@ public class Robot {
 
         drive = new SampleMecanumDrive(hardwareMap);
         mecanumDrive = new Chassis(drive, g1);
+        mecanumDrive.init(hardwareMap);
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
         wobbleGoal = new WobbleGoal(hardwareMap);
     }
 
     public void update(Gamepad g1, Gamepad g2) {
-        drive.update();
         mecanumDrive.update(g1, g2, telemetry);
         intake.update(g1, g2, telemetry);
         shooter.update(g2);
