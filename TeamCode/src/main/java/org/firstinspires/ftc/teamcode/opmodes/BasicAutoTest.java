@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.subsystems.subclasses.Functions;
+import org.firstinspires.ftc.teamcode.Functions;
 
 @Config
 @Autonomous
@@ -62,17 +62,18 @@ public class BasicAutoTest extends LinearOpMode {
         robot.drive.setPoseEstimate(new Pose2d(-63.5 , -14, 0));
 
         if(opModeIsActive()) {
-            Shooter.rpm = 3400;
-            robot.mecanumDrive.sd.setPos(0.18);
+            Shooter.rpm = 4000;
+            robot.mecanumDrive.sd.setPos(0.16);
             robot.drive.followTrajectory(goToShoot);
             kick();
             functions.sleepUpdate(200);
-            robot.mecanumDrive.sd.setPos(0.16);
+            robot.mecanumDrive.sd.setPos(0.13);
             kick();
             functions.sleepUpdate(200);
-            robot.mecanumDrive.sd.setPos(0.14);
+            robot.mecanumDrive.sd.setPos(0.10);
             kick();
 
+            functions.sleepUpdate(20000);
             telemetry.update();
         }
     }

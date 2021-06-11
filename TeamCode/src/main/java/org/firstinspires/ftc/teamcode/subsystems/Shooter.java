@@ -29,8 +29,9 @@ public class Shooter {
 
     public double distance = 70;
 
-    public static double timing = 120;
+    public static double timing = 70;
     public static double velocity = 50;
+    public static double endPos = 0.175;
 
     double targetVelo = 1620;
 
@@ -43,7 +44,7 @@ public class Shooter {
     public static double kA = 0.0002;
     public static double kStatic = 0;
 
-    public static double rpm = 4200;
+    public static double rpm = 4000;
     static double power;
 
     public TimedAction servoBackAndForth;
@@ -82,9 +83,9 @@ public class Shooter {
         }
 //coding is cool
         servoBackAndForth = new TimedAction(
-                () -> servo.setPosition(0.2),
+                () -> servo.setPosition(endPos),
                 () -> servo.setPosition(0.05),
-                100, // ms
+                timing, // ms
                 true // runs symmetric
         );
 
@@ -128,7 +129,8 @@ public class Shooter {
 
                 break;
             case SHOOTER_FULL:
-                rpm = 4000;
+                rpm = 3900;
+
                 if (gamepad.a) {
                     state = SHOOTER.SHOOTER_EMPTY;
                 }
@@ -138,12 +140,13 @@ public class Shooter {
 
                 break;
             case SHOOTER_POWERSHOTS:
-                rpm = 3400;
+                rpm = 3300;
 
                 if (gamepad.a) {
                     state = SHOOTER.SHOOTER_EMPTY;
                 }
                 if (gamepad.y) {
+                    rpm = 3900;
                     state = SHOOTER.SHOOTER_FULL;
                 }
 

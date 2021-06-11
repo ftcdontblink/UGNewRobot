@@ -84,7 +84,7 @@ public class OriginalAutoTest extends LinearOpMode {
             switch(paths) {
                 case MOVE_TO_POWERSHOTS:
                     Shooter.rpm = velo;
-                    robot.shooter.sd.setPos(angle);
+                    robot.mecanumDrive.sd.setPos(angle);
                     if(!robot.drive.isBusy()) {
                         timer.reset();
                         paths = Paths.SHOOT;

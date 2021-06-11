@@ -108,7 +108,7 @@ public class ControlAward extends LinearOpMode {
 
         while(opModeIsActive()) {
             robot.wobbleGoal.turret.setPosition(0);
-
+//aarush is cool hello mate vulcan reveal
             switch(paths) {
                 case MOVE_TO_POWERSHOTS:
                     Shooter.rpm = velo;
