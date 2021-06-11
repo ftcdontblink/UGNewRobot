@@ -27,7 +27,7 @@ public class Shooter {
     public DcMotorEx encoder;
     public Servo servo;
 
-    public double distance = 70;
+    public static double distance = 70;
 
     public static double timing = 70;
     public static double velocity = 50;

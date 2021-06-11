@@ -28,7 +28,7 @@ public class SideHood {
         sideHood.setPosition(MID);
     }
 
-    public void update(double position, Gamepad g1) {
+    public void update(double targetAngle, Gamepad g1) {
         switch(states) {
             case MANUAL:
                 sideHood.setPosition(0.15);
@@ -36,9 +36,8 @@ public class SideHood {
                     states = States.AUTOMATIC;
                 break;
             case AUTOMATIC:
-                sideHood.setPosition(position);
+                sideHood.setPosition(thetaToPos(targetAngle));
                 if(g1.right_stick_button) {
-                    sideHood.setPosition(MID);
                     states = States.MANUAL;
                 }
                 break;

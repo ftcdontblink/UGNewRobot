@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import androidx.core.os.TraceKt;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -12,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 @Config
 @Autonomous
@@ -20,6 +19,8 @@ public class OriginalAutoTest extends LinearOpMode {
 
     public static double velo = 4000;
     public static double angle = 0.23;
+
+    Vision vision;
 
     public enum Paths {
         MOVE_TO_POWERSHOTS,
@@ -43,6 +44,7 @@ public class OriginalAutoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new Robot(hardwareMap, gamepad1, gamepad2);
+        vision = new Vision(hardwareMap, "Webcam 1", telemetry);
         ElapsedTime timer = new ElapsedTime();
 
         Trajectory goToShootBlue = robot.drive.trajectoryBuilder(new Pose2d(-63.5, -14, 0))
@@ -63,6 +65,7 @@ public class OriginalAutoTest extends LinearOpMode {
             }
 
             telemetry.addData("Color", color);
+            telemetry.addData("Height", vision.getHeight());
             telemetry.update();
         }
 
@@ -86,14 +89,15 @@ public class OriginalAutoTest extends LinearOpMode {
                     Shooter.rpm = velo;
                     robot.mecanumDrive.sd.setPos(angle);
                     if(!robot.drive.isBusy()) {
+                        robot.shooter.servoBackAndForth.reset();
                         timer.reset();
                         paths = Paths.SHOOT;
                     }
                     break;
                 case SHOOT:
-                    robot.shooter.shoot();
+                    robot.shooter.servoBackAndForth.run();
 
-                    if(timer.milliseconds() > timing) {
+                    if(!robot.shooter.servoBackAndForth.running()) {
                         robot.drive.followTrajectoryAsync(robot.drive.trajectoryBuilder(robot.drive.getPoseEstimate()).forward(25).build());
                         paths = Paths.STOP;
                     }
