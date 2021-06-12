@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -58,11 +59,11 @@ public class TeleOpAlignWithPoint extends LinearOpMode {
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as SampleMecanumDrive's heading controller
-    private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
+    private PIDFController headingController = new PIDFController(new PIDCoefficients(3, 0, 0));
 
     // Declare a target vector you'd like your bot to align with
     // Can be any x/y coordinate of your choosing
-    private Vector2d targetPosition = new Vector2d(0, 0);
+    private Vector2d targetPosition = new Vector2d(72, -36);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -82,6 +83,8 @@ public class TeleOpAlignWithPoint extends LinearOpMode {
         headingController.setInputBounds(-Math.PI, Math.PI);
 
         ElapsedTime timer = new ElapsedTime();
+
+        drive.setPoseEstimate(new Pose2d(-63.5, -14, 0));
 
         waitForStart();
 

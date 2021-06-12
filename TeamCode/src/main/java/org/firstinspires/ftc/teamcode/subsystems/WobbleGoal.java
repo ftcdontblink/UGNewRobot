@@ -14,6 +14,9 @@ public class WobbleGoal extends HardwareBase {
     public Servo arm2;
     public Servo claw;
 
+    public Servo clampLeft;
+    public Servo clampRight;
+
     public static double armPos1;
     public static double armPos2;
     public static double clawPos;
@@ -39,6 +42,19 @@ public class WobbleGoal extends HardwareBase {
         arm1 = map.get(Servo.class, "a1");
         arm2 = map.get(Servo.class, "a2");
         claw = map.get(Servo.class, "claw");
+
+        clampLeft = map.get(Servo.class, "clampleft");
+        clampRight = map.get(Servo.class, "clampRight");
+    }
+
+    public void clampIn() {
+        clampLeft.setPosition(1);
+        clampRight.setPosition(0.8);
+    }
+
+    public void clampOut() {
+        clampLeft.setPosition(0.7);
+        clampRight.setPosition(1);
     }
 
     @Override

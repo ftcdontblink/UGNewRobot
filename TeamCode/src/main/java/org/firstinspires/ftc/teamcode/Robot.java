@@ -33,7 +33,30 @@ public class Robot {
         wobbleGoal = new WobbleGoal(hardwareMap);
     }
 
+    public Robot(HardwareMap hardwareMap, Gamepad g1, Gamepad g2, Telemetry telemetry) {
+        drive = new SampleMecanumDrive(hardwareMap);
+        mecanumDrive = new Chassis(drive, g1);
+        mecanumDrive.init(hardwareMap);
+        intake = new Intake(hardwareMap);
+        shooter = new Shooter(hardwareMap);
+        wobbleGoal = new WobbleGoal(hardwareMap);
+    }
+
+    public Robot(HardwareMap hardwareMap) {
+        wobbleGoal = new WobbleGoal(hardwareMap);
+        intake = new Intake(hardwareMap);
+        shooter = new Shooter(hardwareMap);
+        drive = new SampleMecanumDrive(hardwareMap);
+    }
+
     public void update(Gamepad g1, Gamepad g2) {
+        mecanumDrive.update(g1, g2, telemetry);
+        intake.update(g1, g2, telemetry);
+        shooter.update(g2);
+        wobbleGoal.update(g1, g2, telemetry);
+    }
+
+    public void update(Gamepad g1, Gamepad g2, Telemetry telemetry) {
         mecanumDrive.update(g1, g2, telemetry);
         intake.update(g1, g2, telemetry);
         shooter.update(g2);

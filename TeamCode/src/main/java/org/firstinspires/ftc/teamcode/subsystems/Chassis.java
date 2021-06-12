@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -7,28 +9,55 @@ import com.arcrobotics.ftclib.gamepad.ToggleButtonReader;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.opmodes.UGBasicHighGoalPipeline;
 import org.firstinspires.ftc.teamcode.subsystems.subclasses.SideHood;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
+@Config
 public class Chassis extends HardwareBase {
-    public static Vector2d targetPosition = new Vector2d(72, -36);
+    public static Vector2d targetPosition;
     private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
     SampleMecanumDrive drive;
     Mode mode = Mode.NORMAL;
+    public final double f = 453.46087317;
     ToggleButtonReader toggleA;
 
     public SideHood sd;
 
     public static double distance = 70;
+    public static double b = 0.18;
+    public static double kP = 0.001;
+    public static double kS = 0.05;
+    public static double tolerance = 25;
+
+
+
+    Servo sidehood;
+    UGBasicHighGoalPipeline pipeline;
 
     enum Mode {
         NORMAL,
-        AIM,
+        AIM_CAMERA,
         AIM_NORMAL
     }
+
+    public enum Color {
+        BLUE,
+        RED
+    }
+
+    public Color color = Color.RED;
 
     public Chassis(SampleMecanumDrive drive, Gamepad g1) {
         this.drive = drive;
@@ -40,104 +69,72 @@ public class Chassis extends HardwareBase {
 
     @Override
     public void init(HardwareMap map) {
-        sd = new SideHood(map);
+        sidehood = map.get(Servo.class, "sidehood");
+        pipeline = new UGBasicHighGoalPipeline();
+
+        OpenCvWebcam camera = OpenCvCameraFactory.getInstance().createWebcam(map.get(WebcamName.class, "Webcam 2"),
+                map.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", map.appContext.getPackageName()));
+
+        camera.openCameraDevice();
+        camera.setPipeline(pipeline);
+        camera.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
+        FtcDashboard.getInstance().startCameraStream((CameraStreamSource) camera, 30);
     }
 
     @Override
     public void update(Gamepad g1, Gamepad g2, Telemetry telemetry) {
-        Pose2d poseEstimate = drive.getLocalizer().getPoseEstimate();
-        Pose2d driveDirection = new Pose2d();
-
         Double y = Math.copySign(Math.pow(-g1.left_stick_y, 1), -g1.left_stick_y);
         Double x = Math.copySign(Math.pow(-g1.left_stick_x, 1), -g1.left_stick_x);
         Double rotate = Math.copySign(Math.pow(-g1.right_stick_x, 1), -g1.right_stick_x);
 
-        double target = 0;
+        Pose2d driveDirection = new Pose2d(y, x, rotate);
+        double relativeAngle = 0;
 
-        Vector2d fieldFrameInput = new Vector2d(
-                y, x
-        );
-        Vector2d robotFrameInput = fieldFrameInput.rotated(-poseEstimate.getHeading());
-        Vector2d difference = targetPosition.minus(poseEstimate.vec());
-        double theta = difference.angle();
-        sd.update(theta, g1);
+        if(color == Color.RED) {
+            Rect redRect = pipeline.getRedRect();
+            Point centerOfRedGoal = pipeline.getCenterofRect(redRect);
 
-        switch(mode) {
-            case NORMAL:
-                if(g1.a) {
-                    mode = Mode.AIM;
-                }
+            telemetry.addData("Red goal position",
 
-                if(g1.b) {
-                    mode = Mode.AIM_NORMAL;
-                }
+                    centerOfRedGoal.toString());
+            telemetry.addData("Center: ", centerOfRedGoal);
 
-                driveDirection = new Pose2d(y, x, rotate);
-                break;
-            case AIM_NORMAL:
-                if(!g1.b) {
-                    mode = Mode.NORMAL;
-                }
-
-                fieldFrameInput = new Vector2d(
-                        y, x
-                );
-                robotFrameInput = fieldFrameInput.rotated(-poseEstimate.getHeading());
-                difference = targetPosition.minus(poseEstimate.vec());
-                theta = difference.angle();
-                double thetaFF = -fieldFrameInput.rotated(-Math.PI / 2).dot(difference) / (difference.norm() * difference.norm());
-
-                headingController.setTargetPosition(theta);
-                double headingInput = (headingController.update(poseEstimate.getHeading()) * DriveConstants.kV + thetaFF) * DriveConstants.TRACK_WIDTH;
-                driveDirection = new Pose2d(robotFrameInput, headingInput);
-                break;
-            case AIM:
-                if(!g1.a) {
-                    mode = Mode.NORMAL;
-                }
-
-                fieldFrameInput = new Vector2d(
-                        y, x
-                );
-                robotFrameInput = fieldFrameInput.rotated(-poseEstimate.getHeading());
-                difference = targetPosition.minus(poseEstimate.vec());
-                theta = difference.angle();
-                target = Math.toDegrees(theta);
-
-                if(target > 180)
-                    target -= 360;
-
-                if(target < -180)
-                    target += 360;
-
-                thetaFF = -fieldFrameInput.rotated(-Math.PI / 2).dot(difference) / (difference.norm() * difference.norm());
-
-                if(target < -30) {
-                    target = -30;
-
-                    headingController.setTargetPosition(Math.toRadians(target));
-                    headingInput = (headingController.update(poseEstimate.getHeading()) * DriveConstants.kV + thetaFF) * DriveConstants.TRACK_WIDTH;
-                    driveDirection = new Pose2d(robotFrameInput, headingInput);
-                } else if(target > 30) {
-                    target = 30;
-
-                    headingController.setTargetPosition(Math.toRadians(target));
-                    headingInput = (headingController.update(poseEstimate.getHeading()) * DriveConstants.kV + thetaFF) * DriveConstants.TRACK_WIDTH;
-                    driveDirection = new Pose2d(robotFrameInput, headingInput);
-                } else {
-                    driveDirection = new Pose2d(robotFrameInput, rotate);
-                }
-                break;
+            relativeAngle = (double) Math.atan((double) ((double) centerOfRedGoal.x - 360) / f);
         }
 
+        if(color == Color.BLUE) {
+            Rect blueRect = pipeline.getBlueRect();
+            Point centerOfBlueGoal = pipeline.getCenterofRect(blueRect);
+
+            telemetry.addData("Red goal position",
+
+                    centerOfBlueGoal.toString());
+            telemetry.addData("Center: ", centerOfBlueGoal);
+
+            relativeAngle = (double) Math.atan((double) ((double) centerOfBlueGoal.x - 360) / f);
+        }
+
+
+        double a = 1.0/300.0;
+        double pos = (a*Math.toDegrees(relativeAngle))+b;
+
+        if(g1.a)
+            sidehood.setPosition(a*Math.toDegrees(relativeAngle) + b);
+        else
+            sidehood.setPosition(b);
+
+        if(g2.right_bumper) {
+            color = Color.RED;
+        }
+
+        if(g2.left_bumper) {
+            color = Color.BLUE;
+        }
+
+        telemetry.addData("Color", color);
+        telemetry.addData("Mode", mode);
+
         drive.setWeightedDrivePower(driveDirection);
-        headingController.update(poseEstimate.getHeading());
-
-        distance = poseEstimate.vec().distTo(targetPosition);
         drive.update();
-
-        telemetry.addData("theta", Math.toDegrees(theta));
-        telemetry.addData("target", target);
-        telemetry.update();
     }
 }
