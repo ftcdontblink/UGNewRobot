@@ -63,8 +63,8 @@ public class WobbleGoal extends HardwareBase {
 
         switch (state) {
             case WOBBLE_RIGHT:
-                armPos1 = 0.4;
-                armPos2 = 0.6;
+                armPos1 = 0.6;
+                armPos2 = 0.4;
                 clawPos = 0.775;
 
 

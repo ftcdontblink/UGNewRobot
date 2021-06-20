@@ -40,6 +40,7 @@ public class Chassis extends HardwareBase {
     public static double kP = 0.001;
     public static double kS = 0.05;
     public static double tolerance = 25;
+    public static double position = 25;
 
 
 
@@ -69,16 +70,16 @@ public class Chassis extends HardwareBase {
 
     @Override
     public void init(HardwareMap map) {
-        sidehood = map.get(Servo.class, "sidehood");
-        pipeline = new UGBasicHighGoalPipeline();
+//        sidehood = map.get(Servo.class, "sidehood");
+//        pipeline = new UGBasicHighGoalPipeline();
 
-        OpenCvWebcam camera = OpenCvCameraFactory.getInstance().createWebcam(map.get(WebcamName.class, "Webcam 2"),
-                map.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", map.appContext.getPackageName()));
-
-        camera.openCameraDevice();
-        camera.setPipeline(pipeline);
-        camera.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
-        FtcDashboard.getInstance().startCameraStream((CameraStreamSource) camera, 30);
+//        OpenCvWebcam camera = OpenCvCameraFactory.getInstance().createWebcam(map.get(WebcamName.class, "Webcam 1"),
+//                map.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", map.appContext.getPackageName()));
+//
+//        camera.openCameraDevice();
+//        camera.setPipeline(pipeline);
+//        camera.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
+//        FtcDashboard.getInstance().startCameraStream((CameraStreamSource) camera, 30);
     }
 
     @Override
@@ -88,51 +89,47 @@ public class Chassis extends HardwareBase {
         Double rotate = Math.copySign(Math.pow(-g1.right_stick_x, 1), -g1.right_stick_x);
 
         Pose2d driveDirection = new Pose2d(y, x, rotate);
-        double relativeAngle = 0;
-
-        if(color == Color.RED) {
-            Rect redRect = pipeline.getRedRect();
-            Point centerOfRedGoal = pipeline.getCenterofRect(redRect);
-
-            telemetry.addData("Red goal position",
-
-                    centerOfRedGoal.toString());
-            telemetry.addData("Center: ", centerOfRedGoal);
-
-            relativeAngle = (double) Math.atan((double) ((double) centerOfRedGoal.x - 360) / f);
-        }
-
-        if(color == Color.BLUE) {
-            Rect blueRect = pipeline.getBlueRect();
-            Point centerOfBlueGoal = pipeline.getCenterofRect(blueRect);
-
-            telemetry.addData("Red goal position",
-
-                    centerOfBlueGoal.toString());
-            telemetry.addData("Center: ", centerOfBlueGoal);
-
-            relativeAngle = (double) Math.atan((double) ((double) centerOfBlueGoal.x - 360) / f);
-        }
 
 
-        double a = 1.0/300.0;
-        double pos = (a*Math.toDegrees(relativeAngle))+b;
 
-        if(g1.a)
-            sidehood.setPosition(a*Math.toDegrees(relativeAngle) + b);
-        else
-            sidehood.setPosition(b);
-
-        if(g2.right_bumper) {
-            color = Color.RED;
-        }
-
-        if(g2.left_bumper) {
-            color = Color.BLUE;
-        }
-
-        telemetry.addData("Color", color);
-        telemetry.addData("Mode", mode);
+//        double relativeAngle = 0;
+//
+//        if(color == Color.RED) {
+//            Rect redRect = pipeline.getRedRect();
+//            Point centerOfRedGoal = pipeline.getCenterofRect(redRect);
+//
+//            telemetry.addData("Red goal position",
+//
+//                    centerOfRedGoal.toString());
+//            telemetry.addData("Center: ", centerOfRedGoal);
+//
+//            relativeAngle = (double) Math.atan((double) ((double) centerOfRedGoal.x - 360) / f);
+//        }
+//
+//        if(color == Color.BLUE) {
+//            Rect blueRect = pipeline.getBlueRect();
+//            Point centerOfBlueGoal = pipeline.getCenterofRect(blueRect);
+//
+//            telemetry.addData("Red goal position",
+//
+//                    centerOfBlueGoal.toString());
+//            telemetry.addData("Center: ", centerOfBlueGoal);
+//
+//            relativeAngle = (double) Math.atan((double) ((double) centerOfBlueGoal.x - 360) / f);
+//        }
+//
+//
+//        double a = 1.0/300.0;
+//        double pos = (a*Math.toDegrees(relativeAngle))+b;
+//
+//        if(g1.a)
+//            sidehood.setPosition(a*Math.toDegrees(relativeAngle) + b);
+//        else
+//            sidehood.setPosition(b);
+//
+//
+//        telemetry.addData("Color", color);
+//        telemetry.addData("Mode", mode);
 
         drive.setWeightedDrivePower(driveDirection);
         drive.update();

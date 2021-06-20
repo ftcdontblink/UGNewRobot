@@ -39,6 +39,7 @@ public class GoodBlueAuto extends LinearOpMode {
 
 
     Servo sidehood;
+    private double delay;
 
 
     @Override
@@ -88,9 +89,18 @@ public class GoodBlueAuto extends LinearOpMode {
         detector.init();
         height = detector.getHeight();
 
-//        while(!isStarted()) {
-//            height = detector.getHeight();
-//        }
+        delay = 0;
+
+        while(!isStarted()) {
+            height = detector.getHeight();
+            if(gamepad1.dpad_up)
+                delay+=0.001;
+            if(gamepad1.dpad_down)
+                delay-=0.001;
+
+            telemetry.addData("Delay ", delay);
+            telemetry.update();
+        }
 
         waitForStart();
 
@@ -115,6 +125,8 @@ public class GoodBlueAuto extends LinearOpMode {
     public void bZoneOneWobble() {
         startCondition();
 
+        functions.sleepUpdate(delay);
+
         robot.drive.followTrajectory(dropWobbleBOut);
 
         dropInitialWobble();
@@ -125,6 +137,8 @@ public class GoodBlueAuto extends LinearOpMode {
     public void cZoneOneWobble() {
         startCondition();
 
+        functions.sleepUpdate(delay);
+
         robot.drive.followTrajectory(dropWobbleCOut);
 
         dropInitialWobble();
@@ -134,6 +148,8 @@ public class GoodBlueAuto extends LinearOpMode {
 
     public void aZoneOneWobble() {
         startCondition();
+
+        functions.sleepUpdate(delay);
 
         robot.drive.followTrajectory(dropWobbleAOut);
 
@@ -148,9 +164,17 @@ public class GoodBlueAuto extends LinearOpMode {
     }
 
     public void startCondition() {
-        Shooter.rpm = 4000;
+        robot.intake.motor1.setPower(-1);
+        robot.intake.motor2.setPower(-1);
+        functions.sleepUpdate(200);
+        robot.intake.motor1.setPower(0);
+        robot.intake.motor2.setPower(0);
+        Shooter.rpm = 3800;
         sidehood.setPosition(0.12);
         robot.drive.followTrajectory(goToShootOut);
+        kick();
+        kick();
+        kick();
         kick();
         kick();
         kick();
@@ -164,8 +188,8 @@ public class GoodBlueAuto extends LinearOpMode {
 
     public void kick() {
         robot.shooter.servo.setPosition(0.25);
-        functions.sleepUpdate(100);
+        functions.sleepUpdate(150);
         robot.shooter.servo.setPosition(0.05);
-        functions.sleepUpdate(100);
+        functions.sleepUpdate(150);
     }
 }

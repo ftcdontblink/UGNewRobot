@@ -35,7 +35,7 @@ public class Shooter {
 
     double targetVelo = 1620;
 
-    private SHOOTER state = SHOOTER.SHOOTER_EMPTY;
+    public SHOOTER state = SHOOTER.SHOOTER_EMPTY;
     FtcDashboard dashboard;
     Telemetry dt;
 
@@ -63,11 +63,16 @@ public class Shooter {
     public SampleMecanumDrive drive;
     public static double angle = 0.1;
 
+    Servo sidehood;
+
+    public static double b = 0.2;
+
     public enum SHOOTER {
         SHOOTER_FULL,
         SHOOTER_IDLE,
         SHOOTER_EMPTY,
         SHOOTER_POWERSHOTS,
+        SHOOTER_NORMAL,
         SHOOTER_AUTOMATE
     }
 
@@ -76,6 +81,9 @@ public class Shooter {
         flywheelRight = hardwareMap.get(DcMotorEx.class, "flywheelRight");
         servo = hardwareMap.get(Servo.class, "index");
         servo.setPosition(0.05);
+
+        sidehood = hardwareMap.get(Servo.class, "sidehood");
+        sidehood.setPosition(b);
 
         shooterConstants();
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -116,6 +124,8 @@ public class Shooter {
     }
 
     public void update(Gamepad gamepad) {
+        sidehood.setPosition(0.13);
+
         switch (state) {
             case SHOOTER_EMPTY:
                 rpm = 0;
@@ -126,10 +136,13 @@ public class Shooter {
                 if (gamepad.dpad_down) {
                     state = SHOOTER.SHOOTER_POWERSHOTS;
                 }
+                if(gamepad.left_stick_button) {
+                    state = SHOOTER.SHOOTER_NORMAL;
+                }
 
                 break;
             case SHOOTER_FULL:
-                rpm = 3900;
+                rpm = 2850;
 
                 if (gamepad.a) {
                     state = SHOOTER.SHOOTER_EMPTY;
@@ -137,7 +150,24 @@ public class Shooter {
                 if (gamepad.dpad_down) {
                     state = SHOOTER.SHOOTER_POWERSHOTS;
                 }
+                if(gamepad.left_stick_button) {
+                    state = SHOOTER.SHOOTER_NORMAL;
+                }
 
+                break;
+            case SHOOTER_NORMAL:
+                rpm = 3800;
+
+
+                if (gamepad.a) {
+                    state = SHOOTER.SHOOTER_EMPTY;
+                }
+                if (gamepad.dpad_down) {
+                    state = SHOOTER.SHOOTER_POWERSHOTS;
+                }
+                if(gamepad.y) {
+                    state = SHOOTER.SHOOTER_FULL;
+                }
                 break;
             case SHOOTER_POWERSHOTS:
                 rpm = 3300;
@@ -148,6 +178,9 @@ public class Shooter {
                 if (gamepad.y) {
                     rpm = 3900;
                     state = SHOOTER.SHOOTER_FULL;
+                }
+                if(gamepad.left_stick_button) {
+                    state = SHOOTER.SHOOTER_NORMAL;
                 }
 
                 break;

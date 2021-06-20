@@ -62,4 +62,10 @@ public class Robot {
         shooter.update(g2);
         wobbleGoal.update(g1, g2, telemetry);
     }
+
+    public void update(Gamepad g1, Gamepad g2, boolean a) {
+        intake.update(g1, g2, telemetry);
+        shooter.update(g2);
+        wobbleGoal.update(g1, g2, telemetry);
+    }
 }

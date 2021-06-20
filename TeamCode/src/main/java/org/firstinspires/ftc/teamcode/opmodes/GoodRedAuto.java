@@ -39,7 +39,7 @@ public class GoodRedAuto extends LinearOpMode {
 
 
     Servo sidehood;
-
+    double delay;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -70,7 +70,7 @@ public class GoodRedAuto extends LinearOpMode {
                 .build();
 
         parkA = robot.drive.trajectoryBuilder(dropWobbleAOut.end())
-                .lineTo(new Vector2d(5, -16))
+                .lineTo(new Vector2d(5, -12))
                 .build();
 
         dropWobbleCOut = robot.drive.trajectoryBuilder(goToShootOut.end())
@@ -80,7 +80,7 @@ public class GoodRedAuto extends LinearOpMode {
 
         parkC = robot.drive.trajectoryBuilder(dropWobbleCOut.end())
                 .splineToConstantHeading(new Vector2d(40, -16), 0)
-                .splineToConstantHeading(new Vector2d(5, -16), 0)
+                .splineToConstantHeading(new Vector2d(5, -12), 0)
                 .build();
 
         sidehood = hardwareMap.get(Servo.class, "sidehood");
@@ -89,13 +89,16 @@ public class GoodRedAuto extends LinearOpMode {
         detector.init();
         height = detector.getHeight();
 
-//        while(!isStarted()) {
-//            height = detector.getHeight();
-//        }
+        delay = 0;
 
-        while(!opModeIsActive()) {
+        while(!isStarted()) {
             height = detector.getHeight();
-            telemetry.addData("Height from here", height);
+            if(gamepad1.dpad_up)
+                delay+=0.001;
+            if(gamepad1.dpad_down)
+                delay-=0.001;
+
+            telemetry.addData("Delay ", delay);
             telemetry.update();
         }
 
@@ -122,6 +125,8 @@ public class GoodRedAuto extends LinearOpMode {
     public void bZoneOneWobble() {
         startCondition();
 
+//        functions.sleepUpdate(delay);
+
         robot.drive.followTrajectory(dropWobbleBOut);
 
         dropInitialWobble();
@@ -132,6 +137,8 @@ public class GoodRedAuto extends LinearOpMode {
     public void cZoneOneWobble() {
         startCondition();
 
+//        functions.sleepUpdate(delay);
+
         robot.drive.followTrajectory(dropWobbleCOut);
 
         dropInitialWobble();
@@ -141,6 +148,8 @@ public class GoodRedAuto extends LinearOpMode {
 
     public void aZoneOneWobble() {
         startCondition();
+
+//        functions.sleepUpdate(delay);
 
         robot.wobbleGoal.clampIn();
         robot.drive.followTrajectory(dropWobbleAOut);
@@ -156,9 +165,17 @@ public class GoodRedAuto extends LinearOpMode {
     }
 
     public void startCondition() {
-        Shooter.rpm = 4000;
+        robot.intake.motor1.setPower(-1);
+        robot.intake.motor2.setPower(-1);
+        functions.sleepUpdate(200);
+        robot.intake.motor1.setPower(0);
+        robot.intake.motor2.setPower(0);
+        Shooter.rpm = 3800;
         sidehood.setPosition(0.235);
         robot.drive.followTrajectory(goToShootOut);
+        kick();
+        kick();
+        kick();
         kick();
         kick();
         kick();
@@ -172,8 +189,8 @@ public class GoodRedAuto extends LinearOpMode {
 
     public void kick() {
         robot.shooter.servo.setPosition(0.25);
-        functions.sleepUpdate(100);
+        functions.sleepUpdate(150);
         robot.shooter.servo.setPosition(0.05);
-        functions.sleepUpdate(100);
+        functions.sleepUpdate(150);
     }
 }
