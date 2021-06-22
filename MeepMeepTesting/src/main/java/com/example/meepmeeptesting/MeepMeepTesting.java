@@ -28,6 +28,7 @@ public class MeepMeepTesting {
                 .setConstraints(MAX_VEL, MAX_ACCEL, MAX_ANG_VEL, MAX_ANG_ACCEL, 15)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startPose)
+                                .setReversed(true)
                                 .splineToConstantHeading(new Vector2d(-5, -14), 0)
                                 .splineToConstantHeading(new Vector2d(36, -19), 0)
                                 .lineTo(new Vector2d(36, -62))

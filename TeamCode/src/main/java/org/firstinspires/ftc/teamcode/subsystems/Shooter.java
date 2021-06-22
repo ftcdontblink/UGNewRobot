@@ -99,9 +99,6 @@ public class Shooter {
 
         dashboard = FtcDashboard.getInstance();
         dt = dashboard.getTelemetry();
-
-        flywheelLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        flywheelRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void shooterConstants() {
@@ -110,6 +107,9 @@ public class Shooter {
 
         flywheelLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        flywheelLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        flywheelRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void on(double velocity) {
